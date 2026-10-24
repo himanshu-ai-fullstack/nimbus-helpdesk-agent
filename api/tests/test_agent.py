@@ -80,13 +80,31 @@ def test_ui_messages_round_trip_tool_steps():
                     "output": {"results": []},
                 },
                 {"type": "step-start"},
+                {
+                    "type": "dynamic-tool",
+                    "toolName": "get_invoice",
+                    "toolCallId": "t2",
+                    "state": "output-available",
+                    "input": {"invoice_id": "INV-1"},
+                    "output": {},
+                },
+                {"type": "step-start"},
                 {"type": "text", "text": "Nothing found."},
             ],
         },
         {"role": "user", "parts": [{"type": "text", "text": "ok"}]},
     ]
     msgs = ui_to_anthropic(ui)
-    assert [m["role"] for m in msgs] == ["user", "assistant", "user", "assistant", "user"]
+    assert [m["role"] for m in msgs] == [
+        "user",
+        "assistant",
+        "user",
+        "assistant",
+        "user",
+        "assistant",
+        "user",
+    ]
+    assert msgs[3]["content"][0]["name"] == "get_invoice"
     assert msgs[1]["content"][0]["type"] == "tool_use"
     assert msgs[2]["content"][0]["tool_use_id"] == "t1"
-    assert msgs[3]["content"] == [{"type": "text", "text": "Nothing found."}]
+    assert msgs[5]["content"] == [{"type": "text", "text": "Nothing found."}]

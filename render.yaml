@@ -1,0 +1,21 @@
+# Render blueprint for the FastAPI service. Postgres lives on Neon (pgvector built in).
+services:
+  - type: web
+    name: nimbus-helpdesk-api
+    runtime: docker
+    rootDir: api
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: ADMIN_TOKEN
+        generateValue: true
+      - key: CHAT_MODEL
+        value: claude-opus-5-5

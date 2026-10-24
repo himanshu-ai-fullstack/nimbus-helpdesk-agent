@@ -1,0 +1,22 @@
+[
+  {"question": "Can I get my money back for last week's invoice?", "article": "Refund policy"},
+  {"question": "How long does a refund take to show up on my card?", "article": "Refund policy"},
+  {"question": "Is the extra storage add-on refundable?", "article": "Refund policy"},
+  {"question": "How much does Business cost per user?", "article": "Plans and pricing"},
+  {"question": "Does the free plan have a member limit?", "article": "Plans and pricing"},
+  {"question": "How much do I save with yearly billing?", "article": "Plans and pricing"},
+  {"question": "What happens to SSO if I move down to Pro?", "article": "Upgrade, downgrade, or cancel your plan"},
+  {"question": "How do I cancel my subscription?", "article": "Upgrade, downgrade, or cancel your plan"},
+  {"question": "Are view-only guests charged as seats?", "article": "Adding and removing seats"},
+  {"question": "I removed members, will I be credited?", "article": "Adding and removing seats"},
+  {"question": "Our Okta login test says audience mismatch", "article": "Set up SAML single sign-on (Business plan)"},
+  {"question": "How do I enforce single sign-on for everyone?", "article": "Set up SAML single sign-on (Business plan)"},
+  {"question": "I lost the phone with my authenticator app", "article": "Reset your password or two-factor authentication"},
+  {"question": "My password reset link stopped working", "article": "Reset your password or two-factor authentication"},
+  {"question": "My automation stopped firing this month", "article": "Automations and run limits"},
+  {"question": "How do I buy more automation runs?", "article": "Automations and run limits"},
+  {"question": "How can I download all my projects as CSV?", "article": "Export your data"},
+  {"question": "Does the export include archived projects?", "article": "Export your data"},
+  {"question": "The app is down, is there an outage?", "article": "Service status and outages"},
+  {"question": "Do we get a credit for downtime?", "article": "Service status and outages"}
+]

@@ -46,12 +46,14 @@ def ui_to_anthropic(ui_messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
                 flush(content, results)
             elif ptype == "text" and p.get("text"):
                 content.append({"type": "text", "text": p["text"]})
-            elif ptype.startswith("tool-") and p.get("state") == "output-available":
+            elif (ptype.startswith("tool-") or ptype == "dynamic-tool") and p.get(
+                "state"
+            ) == "output-available":
                 content.append(
                     {
                         "type": "tool_use",
                         "id": p["toolCallId"],
-                        "name": ptype.removeprefix("tool-"),
+                        "name": p.get("toolName") or ptype.removeprefix("tool-"),
                         "input": p.get("input") or {},
                     }
                 )

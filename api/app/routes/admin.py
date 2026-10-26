@@ -1,8 +1,9 @@
 from typing import Any, Literal
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 
+from ..telemetry.analytics import tenant_analytics
 from ..tenants.seed import seed_all
 from .deps import Tenant, TenantAdmin, platform_admin
 
@@ -53,6 +54,13 @@ async def decide_action(
 @router.get("/api/t/{slug}/tickets")
 async def list_tickets(request: Request, t: TenantAdmin) -> list[dict[str, Any]]:
     return await request.app.state.repo.list_tickets(t.slug)
+
+
+@router.get("/api/t/{slug}/analytics")
+async def analytics(
+    request: Request, t: TenantAdmin, days: int = Query(30, ge=1, le=90)
+) -> dict[str, Any]:
+    return await tenant_analytics(request.app.state.pool, t.slug, days)
 
 
 @router.post("/api/admin/reset", dependencies=[Depends(platform_admin)])

@@ -4,10 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   createContext,
-  use,
   useCallback,
   useContext,
-  useEffect,
   useState,
   useSyncExternalStore,
   type CSSProperties,
@@ -44,25 +42,13 @@ function subscribeTokens(listener: () => void) {
   };
 }
 
-export function TenantShell({ params, children }: { params: Promise<{ tenant: string }>; children: ReactNode }) {
-  const { tenant: slug } = use(params);
-  const [tenant, setTenant] = useState<Tenant | null>(null);
-  const [missing, setMissing] = useState(false);
+export function TenantShell({ tenant, children }: { tenant: Tenant; children: ReactNode }) {
+  const slug = tenant.slug;
   const token = useSyncExternalStore(
     subscribeTokens,
     () => storage.get(tokenKey(slug)),
     () => null,
   );
-
-  useEffect(() => {
-    let live = true;
-    api<Tenant>(`/api/t/${slug}`)
-      .then((t) => live && setTenant(t))
-      .catch((e) => live && setMissing(e instanceof ApiError && e.status === 404));
-    return () => {
-      live = false;
-    };
-  }, [slug]);
 
   const setToken = useCallback(
     (value: string | null) => {
@@ -71,16 +57,6 @@ export function TenantShell({ params, children }: { params: Promise<{ tenant: st
     },
     [slug],
   );
-
-  if (missing) {
-    return (
-      <main className="mx-auto max-w-xl flex-1 px-4 py-16 text-center">
-        <h1 className="text-xl font-semibold">No company called “{slug}”</h1>
-        <Link href="/" className="mt-4 inline-block text-sm underline">Choose a company</Link>
-      </main>
-    );
-  }
-  if (!tenant) return <div className="flex-1" />;
 
   return (
     <Ctx.Provider value={{ tenant, token, setToken }}>

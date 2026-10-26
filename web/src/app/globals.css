@@ -17,3 +17,26 @@ body {
 .prose-chat strong { font-weight: 600; }
 .prose-chat code { font-family: var(--font-geist-mono); font-size: 0.85em; padding: 0.1rem 0.3rem; border-radius: 0.25rem; background: rgb(0 0 0 / 0.06); }
 .prose-chat a { color: rgb(79 70 229); text-decoration: underline; }
+
+/* Chart roles (dataviz reference palette, slots 1-3; validated light on #ffffff and
+   dark on #18181b). Charts reference roles, never raw hex. */
+.viz-root {
+  --viz-surface: #ffffff;
+  --viz-grid: #e7e5e4;
+  --viz-text: #18181b;
+  --viz-muted: #71717a;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+}
+@media (prefers-color-scheme: dark) {
+  .viz-root {
+    --viz-surface: #18181b;
+    --viz-grid: #2e2e32;
+    --viz-text: #f4f4f5;
+    --viz-muted: #a1a1aa;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+  }
+}

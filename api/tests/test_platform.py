@@ -253,3 +253,38 @@ def test_invalid_tenant_config_fails_to_load(tmp_path):
     (folder / "tenant.yaml").write_text("name: Acme\nbrand_color: blue\n")
     with pytest.raises(ValueError, match="brand_color"):
         load_tenant(folder)
+
+
+async def test_a_conversation_can_only_access_one_account(make_tools):
+    ctx, tools, _ = make_tools("nimbus")
+    await run(tools, "lookup_account", email="priya@lumen.example")
+    other = await run(tools, "lookup_account", email="sara@northwind.example")
+    assert other["found"] is False and "only access one account" in other["note"]
+    assert ctx.known_accounts == {"cus_001"}
+    # Looking up the same person again is fine.
+    assert (await run(tools, "lookup_account", email="priya@lumen.example"))["found"]
+
+
+def test_scaffolded_tenant_is_valid(tmp_path):
+    from app.tenants.new import scaffold
+
+    folder = scaffold("acme", "Acme Robotics", "robot vacuum maker", root=tmp_path)
+    tenant = load_tenant(folder)
+    assert tenant.name == "Acme Robotics" and "refund" in tenant.actions
+    with pytest.raises(FileExistsError):
+        scaffold("acme", "Acme", "x", root=tmp_path)
+    with pytest.raises(ValueError, match="slug"):
+        scaffold("Bad Slug", "Acme", "x", root=tmp_path)
+
+
+def test_tool_description_states_each_policy(registry):
+    from app.tools.registry import rules
+
+    nimbus = registry.get("nimbus").actions["refund"]
+    assert rules(nimbus) == (
+        "Applies to invoices, whose status is paid, dated within the last 14 days. "
+        "Takes an amount in USD, at most what remains after earlier pending or approved "
+        "requests, and at most $500 per request (escalate larger ones)."
+    )
+    access = registry.get("northstar").actions["software_access"]
+    assert rules(access).endswith("Takes no amount.")

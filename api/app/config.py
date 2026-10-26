@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import anthropic
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # USD per million tokens: (input, output). Cache reads bill at 0.1x input and
@@ -48,3 +49,14 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
+
+def make_llm(cfg: Settings) -> "anthropic.AsyncAnthropic":
+    """The read timeout is the longest gap between streamed chunks. The SDK default
+    (10 minutes) would leave a person staring at a stalled reply; fail after a
+    minute of silence and let the SDK retry instead."""
+    return anthropic.AsyncAnthropic(
+        api_key=cfg.anthropic_api_key or None,
+        timeout=anthropic.Timeout(120.0, connect=10.0, read=60.0),
+        max_retries=2,
+    )

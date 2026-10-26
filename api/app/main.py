@@ -1,11 +1,10 @@
 from contextlib import asynccontextmanager
 
-import anthropic
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .config import get_settings
+from .config import get_settings, make_llm
 from .db import create_pool
 from .platform.repo import PlatformRepo
 from .rag.embeddings import build_embedder
@@ -30,7 +29,7 @@ async def lifespan(app: FastAPI):
     app.state.store = VectorStore(pool, embedder)
     app.state.repo = PlatformRepo(pool)
     app.state.conversations = ConversationStore(pool)
-    app.state.llm = anthropic.AsyncAnthropic(api_key=cfg.anthropic_api_key or None)
+    app.state.llm = make_llm(cfg)
     app.state.limiter = SlidingWindowLimiter(cfg.chat_rate_limit, cfg.chat_rate_window_s)
     yield
     await pool.close()

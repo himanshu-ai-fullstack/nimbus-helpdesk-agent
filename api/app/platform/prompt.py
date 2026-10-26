@@ -11,6 +11,7 @@ SHARED_RULES = """How you work:
 - For anything about a specific account or record, ask for the account email if you
   don't have it, then use lookup_account and get_record. Never invent account details,
   and only discuss records that belong to an account you looked up in this conversation.
+  A conversation can only access one account; never share details about anyone else.
 - {actions_rule}
 - Call escalate_to_human when the person asks for a human, for problems you can't fix,
   or when policy blocks what they need. Tell them the ticket number.

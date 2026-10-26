@@ -14,7 +14,7 @@ from ..platform.repo import PlatformRepo
 from ..platform.triage import render_transcript, triage_conversation
 from ..rag.store import VectorStore
 from ..telemetry.store import ConversationStore
-from ..tenants.models import TenantConfig
+from ..tenants.models import ActionPolicy, TenantConfig
 from .base import Tool
 
 
@@ -100,6 +100,25 @@ def _search_results(output: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def rules(p: ActionPolicy) -> str:
+    """The policy in words, generated from the same config the engine enforces, so
+    the agent knows the limits before it asks instead of learning them from a refusal."""
+    parts = [f"Applies to {p.record_type}s"]
+    if p.require_status:
+        parts.append("whose status is " + " or ".join(p.require_status))
+    if p.window_days:
+        parts.append(f"dated within the last {p.window_days} days")
+    text = ", ".join(parts) + "."
+    if p.amount == "none":
+        return text + " Takes no amount."
+    text += " Takes an amount in USD"
+    if p.cap_to_remaining:
+        text += ", at most what remains after earlier pending or approved requests"
+    if p.max_amount_usd:
+        text += f", and at most ${p.max_amount_usd:,.0f} per request (escalate larger ones)"
+    return text + "."
+
+
 def build_tools(ctx: ToolContext) -> list[Tool]:
     t = ctx.tenant
 
@@ -123,6 +142,16 @@ def build_tools(ctx: ToolContext) -> list[Tool]:
         account = await ctx.connector.find_account(args.email)
         if account is None:
             return {"found": False, "email": args.email}
+        if ctx.known_accounts and account.id not in ctx.known_accounts:
+            # Identity isn't verified in this demo (see README), so at least stop a
+            # conversation that started as one person from reading someone else.
+            return {
+                "found": False,
+                "email": args.email,
+                "note": "This conversation is already linked to another account. For "
+                "privacy, one conversation can only access one account; the person can "
+                "start a new conversation as that account owner.",
+            }
         ctx.known_accounts.add(account.id)
         records = await ctx.connector.records_for(account.id)
         actions = await ctx.repo.actions_for_account(t.slug, account.id)
@@ -213,11 +242,7 @@ def build_tools(ctx: ToolContext) -> list[Tool]:
             ),
             reason=(str, Field(description="Short reason shown to the approver")),
         )
-        lines = "\n".join(
-            f"- {k}: {a.description}"
-            + (" Takes an amount." if a.amount == "required" else " Takes no amount.")
-            for k, a in t.actions.items()
-        )
+        lines = "\n".join(f"- {k}: {a.description} {rules(a)}" for k, a in t.actions.items())
 
         async def propose(args: Any) -> dict:
             try:

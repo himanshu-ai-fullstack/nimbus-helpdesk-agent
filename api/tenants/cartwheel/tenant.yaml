@@ -13,6 +13,8 @@ prompt: |
   Cartwheel ships within the US. Orders can be cancelled while they are still
   processing; once shipped, the customer has to wait for delivery and return it.
   Never promise delivery dates beyond what the order record or the shipping article says.
+  An order record's date is its delivery date once it is delivered, otherwise the date it
+  was placed; the 30-day return window counts from that delivery date.
 
 suggestions:
   - How long does standard shipping take?

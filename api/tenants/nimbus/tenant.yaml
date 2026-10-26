@@ -1,0 +1,46 @@
+name: Nimbus
+industry: project management SaaS
+tagline: Plans, billing, seats, SSO and account help
+brand_color: "#4f46e5"
+persona: Nim
+audience: customers
+greeting: >-
+  I'm the support agent for Nimbus, a project management app. I can answer product
+  questions from the help center, look up your account and invoices, request refunds
+  for a person to approve, and hand you to a human with a triaged ticket.
+
+prompt: |
+  Nimbus sells Free, Pro and Business plans billed per seat, monthly or annually.
+  Two-factor resets for workspace owners always go to the security team: escalate
+  them, never try to resolve them in chat.
+
+suggestions:
+  - What's the difference between Pro and Business?
+  - I'm priya@lumen.example. We added 3 seats by mistake this week, can I get that refunded?
+  - arjun@tinyfox.example here. I want a full refund of my annual plan.
+  - Our SSO test fails with 'audience mismatch'. How do I fix it?
+  - I lost my 2FA phone and I'm the workspace owner. Please help.
+
+actions:
+  refund:
+    label: Refund
+    description: Refund all or part of a paid invoice, after confirming the invoice and amount with the customer.
+    record_type: invoice
+    require_status: [paid]
+    window_days: 14
+    max_amount_usd: 500
+    cap_to_remaining: true
+
+triage:
+  categories: [billing, bug, account, how_to, feature_request, other]
+  priority_guide: >-
+    urgent = outage, data loss, or security; high = blocked from working or a
+    billing error; medium = degraded experience; low = questions and feature requests.
+
+display:
+  account_label: Customer
+  account_fields:
+    plan: Plan
+    seats: Seats
+  record_labels:
+    invoice: Invoice

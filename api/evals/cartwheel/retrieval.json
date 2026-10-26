@@ -1,0 +1,15 @@
+[
+  {"question": "How long will standard delivery take?", "article": "Shipping options and delivery times"},
+  {"question": "Can you send my order to Toronto?", "article": "Shipping options and delivery times"},
+  {"question": "How much is overnight shipping?", "article": "Shipping options and delivery times"},
+  {"question": "What does the processing status mean on my order?", "article": "Tracking your order"},
+  {"question": "Tracking says delivered but there's no package", "article": "Tracking your order"},
+  {"question": "Can I send back a jacket I bought last week?", "article": "Returns and refunds"},
+  {"question": "How long until my return refund shows up?", "article": "Returns and refunds"},
+  {"question": "I changed my mind, can I cancel an order before it ships?", "article": "Cancelling an order"},
+  {"question": "My order already shipped, can I still cancel it?", "article": "Cancelling an order"},
+  {"question": "The zipper on my backpack broke after a year", "article": "Warranty on gear"},
+  {"question": "Is a leaking tent seam covered?", "article": "Warranty on gear"},
+  {"question": "Do you take PayPal or Apple Pay?", "article": "Payment methods"},
+  {"question": "I was charged twice for one order", "article": "Payment methods"}
+]

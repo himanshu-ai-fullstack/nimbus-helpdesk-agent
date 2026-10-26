@@ -1,16 +1,13 @@
-from datetime import date
+import pytest
 
-from app.helpdesk.seed import seed
-from app.rag.embeddings import HashEmbedder
-from app.rag.store import VectorStore
-from evals.retrieval import evaluate
+from evals.retrieval import evaluate, load_cases
 
 
-async def test_retrieval_eval_baseline(pool):
+@pytest.mark.parametrize("tenant", ["nimbus", "cartwheel", "northstar"])
+async def test_retrieval_eval_baseline(seeded, store, tenant):
     """Regression floor using the offline hash embedder; real embeddings score higher
     (run `python -m evals.retrieval` with OPENAI_API_KEY set)."""
-    store = VectorStore(pool, HashEmbedder(64))
-    await seed(pool, store, today=date(2026, 10, 24))
-    report = await evaluate(store)
-    print(report)
+    assert len(load_cases(tenant)) >= 10
+    report = await evaluate(store, tenant)
+    print(tenant, report)
     assert report["hit@3"] >= 0.8

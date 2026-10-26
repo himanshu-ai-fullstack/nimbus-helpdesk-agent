@@ -1,0 +1,13 @@
+{
+  "accounts": [
+    {"id": "cust_maya", "email": "maya@trailmix.example", "name": "Maya Patel", "status": "active", "created_days_ago": 300, "attributes": {"member_tier": "Summit", "city": "Denver, CO"}},
+    {"id": "cust_owen", "email": "owen@ridgeline.example", "name": "Owen Brooks", "status": "active", "created_days_ago": 60, "attributes": {"member_tier": "Basecamp", "city": "Portland, OR"}}
+  ],
+  "records": [
+    {"id": "ORD-5001", "account": "cust_maya", "type": "order", "status": "delivered", "amount_usd": 149.00, "title": "Alpine 2-person tent", "days_ago": 12, "attributes": {"carrier": "UPS", "tracking": "1Z999AA10123456784"}},
+    {"id": "ORD-5002", "account": "cust_maya", "type": "order", "status": "processing", "amount_usd": 64.00, "title": "Trail running shoes, size 8", "days_ago": 1, "attributes": {}},
+    {"id": "ORD-5003", "account": "cust_maya", "type": "order", "status": "delivered", "amount_usd": 89.00, "title": "Down jacket, medium", "days_ago": 45, "attributes": {"carrier": "USPS"}},
+    {"id": "ORD-6001", "account": "cust_owen", "type": "order", "status": "delivered", "amount_usd": 420.00, "title": "Carbon trekking poles and 50L pack", "days_ago": 5, "attributes": {"carrier": "FedEx"}},
+    {"id": "ORD-6002", "account": "cust_owen", "type": "order", "status": "shipped", "amount_usd": 35.00, "title": "Rechargeable headlamp", "days_ago": 3, "attributes": {"carrier": "USPS", "tracking": "9400111899223344556677"}}
+  ]
+}

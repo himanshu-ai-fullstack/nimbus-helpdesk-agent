@@ -1,0 +1,14 @@
+{
+  "accounts": [
+    {"id": "emp_ana", "email": "ana@northstar.example", "name": "Ana Costa", "status": "active", "created_days_ago": 540, "attributes": {"department": "Product Design", "manager": "Ravi Iyer", "location": "Lisbon"}},
+    {"id": "emp_ravi", "email": "ravi@northstar.example", "name": "Ravi Iyer", "status": "active", "created_days_ago": 1300, "attributes": {"department": "Product Design", "manager": "Dana Wu", "location": "Bengaluru"}}
+  ],
+  "records": [
+    {"id": "DEV-1001", "account": "emp_ana", "type": "laptop", "status": "active", "title": "MacBook Pro 14-inch (2024)", "days_ago": 400, "attributes": {"serial": "C02XK1ABCD12"}},
+    {"id": "APP-1001", "account": "emp_ana", "type": "app", "status": "not_granted", "title": "Figma (Professional)", "days_ago": 0},
+    {"id": "APP-1002", "account": "emp_ana", "type": "app", "status": "granted", "title": "GitHub Enterprise", "days_ago": 500},
+    {"id": "DEV-2001", "account": "emp_ravi", "type": "laptop", "status": "damaged", "title": "ThinkPad X1 Carbon (2021)", "days_ago": 1250, "attributes": {"serial": "PF2ABC34", "issue": "reported cracked screen"}},
+    {"id": "APP-2001", "account": "emp_ravi", "type": "app", "status": "not_granted", "title": "Salesforce", "days_ago": 0},
+    {"id": "APP-2002", "account": "emp_ravi", "type": "app", "status": "granted", "title": "Figma (Professional)", "days_ago": 900}
+  ]
+}

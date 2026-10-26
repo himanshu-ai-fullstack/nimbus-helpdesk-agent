@@ -1,14 +1,18 @@
 """Structured ticket triage: Claude reads a conversation and returns a validated
-Pydantic object (structured outputs), which a human queue can sort and route."""
+Pydantic object (structured outputs), which a human queue can sort and route.
+The category list comes from each tenant's config, so the schema is built per
+tenant."""
 
-from typing import Literal
+from functools import cache
+from typing import Any, Literal
 
 import anthropic
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, create_model
+
+from ..tenants.models import TenantConfig
 
 
-class TicketTriage(BaseModel):
-    category: Literal["billing", "bug", "account", "how_to", "feature_request", "other"]
+class TriageBase(BaseModel):
     priority: Literal["low", "medium", "high", "urgent"]
     sentiment: Literal["positive", "neutral", "frustrated", "angry"]
     summary: str = Field(description="One or two sentences a human agent can act on")
@@ -16,13 +20,24 @@ class TicketTriage(BaseModel):
     suggested_next_step: str
 
 
-TRIAGE_PROMPT = """You triage support conversations for Nimbus, a project management SaaS.
-Priority guide: urgent = outage, data loss, or security; high = blocked from working or a
-billing error; medium = degraded experience; low = questions and feature requests.
-Read the conversation and fill in the triage fields."""
+@cache
+def triage_model(categories: tuple[str, ...]) -> type[TriageBase]:
+    return create_model(
+        "TicketTriage",
+        __base__=TriageBase,
+        category=(Literal[categories], ...),  # type: ignore[arg-type,valid-type]
+    )
 
 
-def render_transcript(messages: list[dict]) -> str:
+def triage_prompt(tenant: TenantConfig) -> str:
+    return (
+        f"You triage support conversations for {tenant.name}, a {tenant.industry}.\n"
+        f"Priority guide: {tenant.triage.priority_guide}\n"
+        "Read the conversation and fill in the triage fields."
+    )
+
+
+def render_transcript(messages: list[dict[str, Any]]) -> str:
     lines = []
     for m in messages:
         if isinstance(m["content"], str):
@@ -38,19 +53,19 @@ def render_transcript(messages: list[dict]) -> str:
 
 
 async def triage_conversation(
-    client: anthropic.AsyncAnthropic, model: str, transcript: str, reason: str
-) -> TicketTriage:
+    client: anthropic.AsyncAnthropic, tenant: TenantConfig, transcript: str, reason: str
+) -> BaseModel:
     response = await client.messages.parse(
-        model=model,
+        model=tenant.models.fast,
         max_tokens=4000,
-        system=TRIAGE_PROMPT,
+        system=triage_prompt(tenant),
         messages=[
             {
                 "role": "user",
                 "content": f"Escalation reason: {reason}\n\n<conversation>\n{transcript}\n</conversation>",
             }
         ],
-        output_format=TicketTriage,
+        output_format=triage_model(tuple(tenant.triage.categories)),
         output_config={"effort": "low"},
     )
     if response.parsed_output is None:

@@ -1,0 +1,53 @@
+name: Cartwheel
+industry: online outdoor gear store
+tagline: Orders, shipping, returns and refunds
+brand_color: "#0f766e"
+persona: Wren
+audience: customers
+greeting: >-
+  I'm the support assistant for Cartwheel, an online outdoor gear store. I can track
+  your order, explain shipping and returns, request a return refund or an order
+  cancellation for our team to approve, and hand you to a person when needed.
+
+prompt: |
+  Cartwheel ships within the US. Orders can be cancelled while they are still
+  processing; once shipped, the customer has to wait for delivery and return it.
+  Never promise delivery dates beyond what the order record or the shipping article says.
+
+suggestions:
+  - How long does standard shipping take?
+  - I'm maya@trailmix.example. The tent from order ORD-5001 leaks, can I return it?
+  - maya@trailmix.example here, please cancel my running shoes order.
+  - owen@ridgeline.example. I want a refund for my $420 trekking order.
+  - Do you ship to Canada?
+
+actions:
+  return_refund:
+    label: Return refund
+    description: Refund a delivered order (or part of it) the customer is returning, after confirming the order and amount.
+    record_type: order
+    require_status: [delivered]
+    window_days: 30
+    max_amount_usd: 200
+    cap_to_remaining: true
+  cancel_order:
+    label: Order cancellation
+    description: Cancel an order that has not shipped yet.
+    record_type: order
+    require_status: [processing]
+    amount: none
+
+triage:
+  categories: [order_status, shipping, returns, product_issue, payment, other]
+  priority_guide: >-
+    urgent = safety issue with a product or a suspected fraudulent charge; high = order
+    lost, wrong item, or charged twice; medium = late delivery or a damaged item;
+    low = questions.
+
+display:
+  account_label: Customer
+  account_fields:
+    member_tier: Member tier
+    city: City
+  record_labels:
+    order: Order

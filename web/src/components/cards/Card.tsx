@@ -37,11 +37,13 @@ export function Badge({ children, color = "zinc" }: { children: ReactNode; color
 }
 
 export function statusColor(status: string) {
-  if (["paid", "active", "approved"].includes(status)) return "green";
-  if (["pending_approval", "past_due", "medium", "high"].includes(status)) return "amber";
-  if (["unpaid", "denied", "urgent", "cancelled"].includes(status)) return "red";
+  if (["paid", "active", "approved", "delivered", "granted", "ready"].includes(status)) return "green";
+  if (["pending_approval", "past_due", "medium", "high", "processing", "shipped"].includes(status)) return "amber";
+  if (["unpaid", "denied", "urgent", "cancelled", "damaged", "end_of_life", "failed"].includes(status)) return "red";
   return "zinc";
 }
+
+export const humanize = (s: string) => s.replaceAll("_", " ");
 
 export function Skeleton({ label }: { label: string }) {
   return (

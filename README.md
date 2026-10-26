@@ -25,6 +25,8 @@ human approves, and escalates to a human queue with a machine-triaged ticket.
 
 ## Architecture
 
+Full folder-by-folder guide and request flow: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
 ```
 Next.js 16 (Vercel)                         FastAPI (Render)                      Postgres + pgvector (Neon)
 ┌────────────────────────┐  POST /api/chat  ┌──────────────────────────────┐      ┌───────────────────────┐

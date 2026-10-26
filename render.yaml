@@ -1,7 +1,7 @@
 # Render blueprint for the FastAPI service. Postgres lives on Neon (pgvector built in).
 services:
   - type: web
-    name: nimbus-helpdesk-api
+    name: helpdesk-agent-api
     runtime: docker
     rootDir: api
     plan: free
@@ -17,5 +17,8 @@ services:
         sync: false
       - key: ADMIN_TOKEN
         generateValue: true
-      - key: CHAT_MODEL
-        value: claude-opus-5-5
+      # JSON map of tenant slug -> admin token, e.g. {"nimbus": "..."}; only hashes are stored
+      - key: TENANT_ADMIN_TOKENS
+        sync: false
+      - key: TENANT_DAILY_BUDGET_USD
+        value: "5"

@@ -1,0 +1,17 @@
+{
+  "accounts": [
+    {"id": "cus_001", "email": "priya@lumen.example", "name": "Priya Sharma", "status": "active", "created_days_ago": 410, "attributes": {"plan": "business", "seats": 18}},
+    {"id": "cus_002", "email": "arjun@tinyfox.example", "name": "Arjun Mehta", "status": "active", "created_days_ago": 95, "attributes": {"plan": "pro", "seats": 5}},
+    {"id": "cus_003", "email": "sara@northwind.example", "name": "Sara Kim", "status": "past_due", "created_days_ago": 220, "attributes": {"plan": "pro", "seats": 12}},
+    {"id": "cus_004", "email": "leo@brightpath.example", "name": "Leo Martins", "status": "active", "created_days_ago": 30, "attributes": {"plan": "free", "seats": 2}}
+  ],
+  "records": [
+    {"id": "INV-1041", "account": "cus_001", "type": "invoice", "status": "paid", "amount_usd": 432.00, "title": "Business plan, 18 seats, monthly", "days_ago": 34},
+    {"id": "INV-1042", "account": "cus_001", "type": "invoice", "status": "paid", "amount_usd": 432.00, "title": "Business plan, 18 seats, monthly", "days_ago": 4},
+    {"id": "INV-1043", "account": "cus_001", "type": "invoice", "status": "paid", "amount_usd": 72.00, "title": "3 extra seats added mid-cycle", "days_ago": 3},
+    {"id": "INV-2001", "account": "cus_002", "type": "invoice", "status": "paid", "amount_usd": 600.00, "title": "Pro plan, 5 seats, annual", "days_ago": 6},
+    {"id": "INV-2002", "account": "cus_002", "type": "invoice", "status": "paid", "amount_usd": 10.00, "title": "Automation run pack (1,000 runs)", "days_ago": 2},
+    {"id": "INV-3001", "account": "cus_003", "type": "invoice", "status": "paid", "amount_usd": 144.00, "title": "Pro plan, 12 seats, monthly", "days_ago": 40},
+    {"id": "INV-3002", "account": "cus_003", "type": "invoice", "status": "unpaid", "amount_usd": 144.00, "title": "Pro plan, 12 seats, monthly", "days_ago": 10}
+  ]
+}

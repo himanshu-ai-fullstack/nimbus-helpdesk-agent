@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
+    inputs:
+      answer_eval:
+        description: "Also run the answer eval against the real model (costs ~$1-2)"
+        type: boolean
+        default: false
 
 jobs:
   api:
@@ -29,7 +35,44 @@ jobs:
       - run: uv sync --frozen
       - run: uv run ruff check .
       - run: uv run ruff format --check .
+      - run: uv run mypy app
+      # Includes row-level-security isolation tests and the per-tenant retrieval
+      # eval floor (hit@3 >= 0.8 with the offline embedder).
       - run: uv run pytest -q
+
+  answer-eval:
+    # Real model calls: only on demand, and only when the secret is configured.
+    if: github.event_name == 'workflow_dispatch' && inputs.answer_eval
+    needs: api
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 10
+    defaults:
+      run:
+        working-directory: api
+    env:
+      EVAL_DATABASE_URL: postgresql://postgres@localhost:5432/app
+      DATABASE_URL: postgresql://postgres@localhost:5432/app
+      ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+      EMBEDDER: hash
+    steps:
+      - uses: actions/checkout@v5
+      - uses: astral-sh/setup-uv@v6
+      - run: uv sync --frozen
+      - run: uv run python -m evals.answers --min-pass 0.85
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: answer-eval
+          path: api/evals/results/
 
   web:
     runs-on: ubuntu-latest

@@ -1,12 +1,12 @@
 import type { Triage } from "@/lib/types";
-import { Badge, Card, statusColor } from "./Card";
+import { Badge, Card, humanize, statusColor } from "./Card";
 
 export function TicketCard({ ticketId, triage }: { ticketId: number; triage: Triage }) {
   return (
     <Card title={`Escalated · ticket #${ticketId}`}>
       <div className="flex flex-wrap gap-1.5">
         <Badge color={statusColor(triage.priority)}>{triage.priority} priority</Badge>
-        <Badge color="indigo">{triage.category.replace("_", " ")}</Badge>
+        <Badge color="indigo">{humanize(triage.category)}</Badge>
         <Badge>{triage.sentiment}</Badge>
       </div>
       <p className="mt-3">{triage.summary}</p>

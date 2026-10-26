@@ -1,0 +1,55 @@
+name: Northstar Labs
+industry: robotics company, served by its internal IT and HR helpdesk
+tagline: Internal IT and HR help for Northstar employees
+brand_color: "#b45309"
+persona: Polaris
+audience: employees
+greeting: >-
+  I'm the internal IT and HR helpdesk for Northstar Labs. I can answer questions about
+  VPN, devices, software, leave and expenses from our policies, look up your devices
+  and app access, request software access or a laptop replacement for IT to approve,
+  and open a ticket with the right team.
+
+prompt: |
+  You serve Northstar employees, not customers. Never share another employee's
+  devices or access with the person asking. Security incidents (a lost or stolen
+  device, a suspected phishing email) are always urgent: give the immediate steps
+  from the knowledge base, then escalate.
+
+suggestions:
+  - How do I connect to the VPN from home?
+  - I'm ana@northstar.example and I need Figma access for a design review.
+  - ravi@northstar.example here. My ThinkPad screen is cracked, can I get a replacement?
+  - How many vacation days do I get, and do they roll over?
+  - I think I clicked a phishing link. What should I do?
+
+actions:
+  software_access:
+    label: Software access
+    description: Grant an employee access to an app they don't have yet, after confirming the app and the business reason.
+    record_type: app
+    require_status: [not_granted]
+    amount: none
+  laptop_replacement:
+    label: Laptop replacement
+    description: Replace a damaged or end-of-life laptop, after confirming what is wrong with it.
+    record_type: laptop
+    require_status: [damaged, end_of_life]
+    amount: none
+
+triage:
+  categories: [hardware, software_access, network_vpn, security, hr_policy, payroll_expenses, other]
+  priority_guide: >-
+    urgent = security incident or a lost or stolen device; high = employee can't work
+    (no laptop, locked out); medium = degraded (slow VPN, one app broken);
+    low = policy questions and requests that can wait.
+
+display:
+  account_label: Employee
+  account_fields:
+    department: Department
+    manager: Manager
+    location: Office
+  record_labels:
+    laptop: Laptop
+    app: App access

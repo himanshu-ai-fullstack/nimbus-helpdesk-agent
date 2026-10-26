@@ -1,8 +1,13 @@
+import json
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
+
+# Renders a tool's output as Anthropic tool_result content. The UI always gets the
+# JSON output; the model can get something richer, e.g. citable search results.
+ContentRenderer = Callable[[dict[str, Any]], list[dict[str, Any]]]
 
 
 @dataclass
@@ -15,6 +20,7 @@ class Tool:
     description: str
     input_model: type[BaseModel]
     handler: Callable[[Any], Awaitable[dict[str, Any]]]
+    to_content: ContentRenderer | None = None
 
     def to_anthropic(self) -> dict[str, Any]:
         return {
@@ -34,3 +40,8 @@ class Tool:
             return await self.handler(args), False
         except Exception as e:  # noqa: BLE001 - surfaced to the model so it can recover
             return {"error": str(e)}, True
+
+    def result_content(self, output: dict[str, Any], is_error: bool) -> str | list[dict[str, Any]]:
+        if self.to_content and not is_error and "error" not in output:
+            return self.to_content(output)
+        return json.dumps(output, default=str)

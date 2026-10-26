@@ -1,0 +1,15 @@
+[
+  {"question": "How do I connect to the VPN from home?", "article": "Connecting to the VPN"},
+  {"question": "GlobalProtect says gateway not responding", "article": "Connecting to the VPN"},
+  {"question": "My laptop screen cracked, what do I do?", "article": "Laptop policy and replacements"},
+  {"question": "When do laptops get refreshed?", "article": "Laptop policy and replacements"},
+  {"question": "How do I get access to Figma?", "article": "Requesting software and app access"},
+  {"question": "Who approves Salesforce licenses?", "article": "Requesting software and app access"},
+  {"question": "How many vacation days do I get each year?", "article": "Leave and vacation policy"},
+  {"question": "Do unused vacation days roll over?", "article": "Leave and vacation policy"},
+  {"question": "How long is parental leave?", "article": "Leave and vacation policy"},
+  {"question": "How do I get reimbursed for a team dinner?", "article": "Expenses and reimbursements"},
+  {"question": "Can I expense a monitor for my home office?", "article": "Expenses and reimbursements"},
+  {"question": "I clicked a suspicious link in an email", "article": "Phishing and security incidents"},
+  {"question": "Someone stole my phone with company email on it", "article": "Phishing and security incidents"}
+]

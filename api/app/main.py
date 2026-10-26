@@ -11,7 +11,7 @@ from .platform.repo import PlatformRepo
 from .rag.embeddings import build_embedder
 from .rag.store import VectorStore
 from .ratelimit import SlidingWindowLimiter
-from .routes import admin, chat
+from .routes import admin, chat, knowledge
 from .telemetry.store import ConversationStore
 from .tenants.loader import TenantNotFound, TenantRegistry, load_tenants
 
@@ -45,6 +45,7 @@ app.add_middleware(
 )
 app.include_router(admin.router)
 app.include_router(chat.router)
+app.include_router(knowledge.router)
 
 
 @app.exception_handler(TenantNotFound)

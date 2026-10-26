@@ -7,9 +7,11 @@ from app.config import get_settings
 from app.db import tenant_conn
 
 from .conftest import TOKENS
-from .fakes import FakeClient, text_turn
+from .fakes import FakeClient, make_pdf, text_turn
 
 NIMBUS = {"x-admin-token": TOKENS["nimbus"]}
+NORTHSTAR = {"x-admin-token": TOKENS["northstar"]}
+NIMBUS_ON_NORTHSTAR = NIMBUS  # another tenant's token
 
 
 @pytest.fixture
@@ -192,3 +194,49 @@ async def test_feedback_on_an_answer(api):
         "/api/t/cartwheel/feedback", json={"message_id": message_id, "rating": -1}
     )
     assert missing.status_code == 404
+
+
+async def test_knowledge_base_upload_search_and_delete(api):
+    app, c = api
+    docs = "/api/t/northstar/documents"
+    pdf = make_pdf(
+        ["Charging the Atlas robot takes 40 minutes.", "Reset the gripper by holding X."]
+    )
+
+    assert (await c.post(docs, files={"file": ("atlas.pdf", pdf)})).status_code == 403
+    r = await c.post(docs, files={"file": ("atlas.pdf", pdf)}, headers=NORTHSTAR)
+    assert r.status_code == 202 and r.json()["status"] == "processing" and r.json()["pages"] == 2
+    doc_id = r.json()["id"]
+
+    # The background task has run by the time the ASGI call returns.
+    [listed] = [d for d in (await c.get(docs, headers=NORTHSTAR)).json() if d["id"] == doc_id]
+    assert listed["status"] == "ready" and listed["chunks"] == 2 and listed["source"] == "atlas.pdf"
+    hits = await app.state.store.search("northstar", "how do I reset the gripper", limit=1)
+    assert hits[0].document_id == doc_id and hits[0].page == 2
+    assert all(h.document_id != doc_id for h in await app.state.store.search("nimbus", "gripper"))
+
+    dup = await c.post(docs, files={"file": ("copy.pdf", pdf)}, headers=NORTHSTAR)
+    assert dup.status_code == 409
+
+    again = await c.post(f"{docs}/{doc_id}/reindex", headers=NORTHSTAR)
+    assert again.status_code == 202
+    assert (await c.delete(f"{docs}/{doc_id}", headers=NIMBUS_ON_NORTHSTAR)).status_code == 403
+    assert (await c.delete(f"{docs}/{doc_id}", headers=NORTHSTAR)).json() == {"status": "deleted"}
+    assert (await c.delete(f"{docs}/{doc_id}", headers=NORTHSTAR)).status_code == 404
+
+
+async def test_upload_rejects_bad_files(api, monkeypatch):
+    _, c = api
+    docs = "/api/t/northstar/documents"
+    exe = await c.post(docs, files={"file": ("setup.exe", b"MZ")}, headers=NORTHSTAR)
+    assert exe.status_code == 415
+    monkeypatch.setattr(get_settings(), "max_upload_bytes", 10)
+    big = await c.post(docs, files={"file": ("big.txt", b"x" * 11)}, headers=NORTHSTAR)
+    assert big.status_code == 413
+
+
+async def test_url_ingestion_refuses_internal_addresses(api):
+    _, c = api
+    for url in ["http://127.0.0.1:5432/", "http://localhost/", "file:///etc/passwd"]:
+        r = await c.post("/api/t/northstar/documents/url", json={"url": url}, headers=NORTHSTAR)
+        assert r.status_code == 422, url

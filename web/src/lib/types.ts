@@ -51,7 +51,7 @@ export type HelpdeskTools = {
   lookup_customer: {
     input: { email: string };
     output:
-      | { found: true; customer: Customer; invoices: Invoice[] }
+      | { found: true; customer: Customer; invoices: Invoice[]; refunds: Pick<Refund, "id" | "invoice_id" | "amount_usd" | "status">[] }
       | { found: false; email: string }
       | ToolError;
   };

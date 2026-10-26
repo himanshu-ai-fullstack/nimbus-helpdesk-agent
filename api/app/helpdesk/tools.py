@@ -66,6 +66,7 @@ def helpdesk_tools(
         if c is None:
             return {"found": False, "email": args.email}
         invoices = await repo.invoices_for(c["id"])
+        refunds = await repo.refunds_for(c["id"])
         return {
             "found": True,
             "customer": {**c, "created_at": c["created_at"].isoformat()},
@@ -79,6 +80,15 @@ def helpdesk_tools(
                     "issued_on": i["issued_on"].isoformat(),
                 }
                 for i in invoices
+            ],
+            "refunds": [
+                {
+                    "id": r["id"],
+                    "invoice_id": r["invoice_id"],
+                    "amount_usd": _money(r["amount_cents"]),
+                    "status": r["status"],
+                }
+                for r in refunds
             ],
         }
 
@@ -140,7 +150,8 @@ def helpdesk_tools(
         ),
         Tool(
             "lookup_customer",
-            "Look up a customer account by email: plan, seats, status and recent invoices.",
+            "Look up a customer account by email: plan, seats, status, recent invoices, and the "
+            "current status of their refund requests.",
             CustomerIn,
             lookup_customer,
         ),

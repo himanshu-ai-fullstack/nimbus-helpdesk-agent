@@ -40,6 +40,14 @@ class HelpdeskRepo:
             (customer_id, limit),
         )
 
+    async def refunds_for(self, customer_id: str) -> list[dict[str, Any]]:
+        return await self._all(
+            "SELECT r.id, r.invoice_id, r.amount_cents, r.reason, r.status, r.created_at "
+            "FROM refunds r JOIN invoices i ON i.id = r.invoice_id "
+            "WHERE i.customer_id = %s ORDER BY r.created_at DESC",
+            (customer_id,),
+        )
+
     async def get_invoice(self, invoice_id: str) -> dict[str, Any] | None:
         return await self._one(
             "SELECT i.*, c.email, c.name AS customer_name, "

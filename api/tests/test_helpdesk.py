@@ -39,6 +39,8 @@ async def test_refund_within_window_is_pending_until_approved(seeded):
     decided = await repo.decide_refund(r["id"], approve=True)
     assert decided and decided["status"] == "approved"
     assert await repo.decide_refund(r["id"], approve=False) is None  # can't decide twice
+    [listed] = await repo.refunds_for("cus_001")
+    assert listed["status"] == "approved"
 
 
 @pytest.mark.parametrize(

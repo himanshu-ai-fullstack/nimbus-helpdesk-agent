@@ -6,9 +6,9 @@ human approves, and escalates to a human queue with a machine-triaged ticket.
 
 **Live demo:** _add your Vercel URL here_
 
-| Chat with generative UI | Mobile |
+| Refund with human approval | Escalation with structured triage |
 |---|---|
-| ![chat](docs/screenshot-chat.png) | ![mobile](docs/screenshot-mobile.png) |
+| ![chat](docs/screenshot-chat.png) | ![escalation](docs/screenshot-escalation.png) |
 
 ## What it shows
 
